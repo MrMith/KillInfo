@@ -3,6 +3,9 @@ Fixes glitch for SCP:SL start of round glitch for players.
 This plugin looks if someone died at the start of the round then kicks them telling them to please reconnect.
 When they rejoin they get the class they had.
 
+[Demo of end of round information](https://gfycat.com/defensivetangiblebelugawhale)
+### This plugin is in BETA. Please report any errors/bugs as a issue or PM on discord.
+
 ## Install Instructions.
 Put blackvoidFix.dll under the release tab into sm_plugins folder.
 
