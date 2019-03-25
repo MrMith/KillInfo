@@ -1,7 +1,5 @@
-# blackvoidFix
-Fixes glitch for SCP:SL start of round glitch for players.
-This plugin looks if someone died at the start of the round then kicks them telling them to please reconnect.
-When they rejoin they get the class they had.
+# KillInfo
+This displays information using personal broadcasts or the player's console about kill with each damagetype, overall accuracy and KDR (Kill death ratio).
 
 [Demo of end of round information](https://gfycat.com/defensivetangiblebelugawhale)
 ### This plugin is in BETA. Please report any errors/bugs as a issue or PM on discord.
