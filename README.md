@@ -5,7 +5,7 @@ This displays information using personal broadcasts or the player's console abou
 ### This plugin is in BETA. Please report any errors/bugs as a issue or PM on discord.
 
 ## Install Instructions.
-Put blackvoidFix.dll under the release tab into sm_plugins folder.
+Put KillInfo.dll under the release tab into sm_plugins folder.
 
 
 ## Config Options.
