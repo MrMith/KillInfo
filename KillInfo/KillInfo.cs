@@ -35,7 +35,7 @@ namespace KillInfo
 		{
 			this.AddEventHandlers(eventLogic = new KillInfoEventLogic(this));
 
-			this.AddConfig(new Smod2.Config.ConfigSetting("ki_playerinfodir", "config", Smod2.Config.SettingType.STRING, true, "Path to store information for KillInfo plugin. Default is where config is. Appdata for windows and /home/USER/.config/SCP Secret Laboratory/ for linux if you didn't change install location."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("ki_playerinfodir", "config", Smod2.Config.SettingType.STRING, true, "Path to store information for KillInfo plugin. Default is where config is. %appdata%\\SCP Secret Laboratory\\ for windows and /home/USER/.config/SCP Secret Laboratory/ for linux."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("ki_disable", false, Smod2.Config.SettingType.BOOL, true, "Disable the entire KillInfo plugin?"));
 
 			this.AddCommand("ki_version", new KillInfo_Version(this));

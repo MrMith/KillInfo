@@ -26,8 +26,7 @@ namespace KillInfo
 		{
 			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
 			{
-				CheckSteamIDForKillInfo[ev.Player.SteamId] = new PlayerInfo();
-				KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
+				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 			}
 
 			CheckSteamIDForKillInfo[ev.Player.SteamId].AddDeath(ev.DamageTypeVar);
@@ -36,8 +35,7 @@ namespace KillInfo
 			{
 				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Killer.SteamId))
 				{
-					CheckSteamIDForKillInfo[ev.Killer.SteamId] = new PlayerInfo();
-					KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId);
+					CheckSteamIDForKillInfo[ev.Killer.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId);
 				}
 				CheckSteamIDForKillInfo[ev.Killer.SteamId].AddKill(ev.DamageTypeVar);
 				ev.Killer.PersonalBroadcast(2, $"{CheckSteamIDForKillInfo[ev.Killer.SteamId].GetKillByDamageType(ev.DamageTypeVar)} (+{ CheckSteamIDForKillInfo[ev.Killer.SteamId].GetCurrentKillsByDamageType(ev.DamageTypeVar)}):Kills with {ev.DamageTypeVar.ToString()}", true);
@@ -56,9 +54,7 @@ namespace KillInfo
 
 				if (!CheckSteamIDForKillInfo.ContainsKey(playa.SteamId))
 				{
-					CheckSteamIDForKillInfo[playa.SteamId] = new PlayerInfo();
-
-					KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId);
+					CheckSteamIDForKillInfo[playa.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId);
 				}
 		
 				playa.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)}\\{CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
@@ -90,8 +86,7 @@ namespace KillInfo
 		{
 			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
 			{
-				CheckSteamIDForKillInfo[ev.Player.SteamId] = new PlayerInfo();
-				KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
+				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 			}
 
 			if (ev.Target != null)

@@ -67,43 +67,41 @@ namespace KillInfo
 		/// Gets one person's stats by steamid on disk.
 		/// </summary>
 		/// <param name="steamid">User's steamid</param>
-		/// <param name="playerinfo">User's information about kills,deaths and shooting.</param>
+		/// <param name="playerinfo">User's information about kills, deaths and shooting.</param>
 		public PlayerInfo ReadPlayerBySteamID(string steamid)
 		{
 			string dir = MakeSureDirExistAndGetDir();
 
 			if (dir.Length == 0)
 			{
-				return null;
+				return new PlayerInfo();
 			}
-			PlayerInfo playerinfo = null;
-			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
-			{
-				if (playa.SteamId == steamid && File.Exists(dir + playa.SteamId + ".txt"))
-				{
-					playerinfo = new PlayerInfo();
-					string fileText = File.ReadAllText(dir + playa.SteamId+".txt");
-					string[] splitbyNewLine = fileText.Split('\n');
-					string[] splitByDamageTypesKills = splitbyNewLine[0].Split(',');
 
-					foreach (string str in splitByDamageTypesKills)
+			PlayerInfo playerinfo = new PlayerInfo();
+
+			if (File.Exists(dir + steamid + ".txt"))
+			{
+				string fileText = File.ReadAllText(dir + steamid + ".txt");
+				string[] splitbyNewLine = fileText.Split('\n');
+				string[] splitByDamageTypesKills = splitbyNewLine[0].Split(',');
+
+				foreach (string str in splitByDamageTypesKills)
+				{
+					string[] damageTypeAndKills = str.Split(':');
+					if (Int32.TryParse(damageTypeAndKills[0], out int value) && Int32.TryParse(damageTypeAndKills[1], out int value2))
 					{
-						string[] damageTypeAndKills = str.Split(':');
-						if (Int32.TryParse(damageTypeAndKills[0], out int value) && Int32.TryParse(damageTypeAndKills[1], out int value2))
-						{
-							playerinfo.SetKill((DamageType)Int32.Parse(damageTypeAndKills[0]), Int32.Parse(damageTypeAndKills[1]));
-						}
+						playerinfo.SetKill((DamageType)Int32.Parse(damageTypeAndKills[0]), Int32.Parse(damageTypeAndKills[1]));
 					}
-					string[] shotsHitsandDeaths = splitbyNewLine[1].Split(':');
-					if (Int32.TryParse(shotsHitsandDeaths[0], out int value3) && Int32.TryParse(shotsHitsandDeaths[1], out int value4) && Int32.TryParse(shotsHitsandDeaths[2], out int value5))
-					{
-						playerinfo.ShotsFired = value4;
-						playerinfo.ShotsHit = value3;
-						playerinfo.SetDeath(DamageType.FALLDOWN, value5);
-					}
-					break;
+				}
+				string[] shotsHitsandDeaths = splitbyNewLine[1].Split(':');
+				if (Int32.TryParse(shotsHitsandDeaths[0], out int value3) && Int32.TryParse(shotsHitsandDeaths[1], out int value4) && Int32.TryParse(shotsHitsandDeaths[2], out int value5))
+				{
+					playerinfo.ShotsFired = value4;
+					playerinfo.ShotsHit = value3;
+					playerinfo.SetDeath(DamageType.FALLDOWN, value5);
 				}
 			}
+			
 			return playerinfo;
 		}
 		
@@ -117,24 +115,20 @@ namespace KillInfo
 			{
 				return;
 			}
-			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
+			foreach (var SteamIDandPlayerInfo in CheckSteamIDForKillInfo)
 			{
-				using (StreamWriter writeData = new StreamWriter(dir + playa.SteamId+".txt", false))
+				using (StreamWriter writeData = new StreamWriter(dir + SteamIDandPlayerInfo.Key +".txt", false))
 				{
 					string formatedString = "";
-					if (!CheckSteamIDForKillInfo.ContainsKey(playa.SteamId))
-					{
-						CheckSteamIDForKillInfo[playa.SteamId] = new PlayerInfo();
-					}
 
 					foreach (Smod2.API.DamageType dmgtyp in (Smod2.API.DamageType[])Enum.GetValues(typeof(Smod2.API.DamageType)))
 					{
-						if(CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtyp) >= 1)
+						if(SteamIDandPlayerInfo.Value.GetKillByDamageType(dmgtyp) >= 1)
 						{
-							formatedString = formatedString + (int)dmgtyp + ":" + CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtyp) + ",";
+							formatedString = formatedString + (int)dmgtyp + ":" + SteamIDandPlayerInfo.Value.GetKillByDamageType(dmgtyp) + ",";
 						}
 					}
-					formatedString = formatedString + "\n" + CheckSteamIDForKillInfo[playa.SteamId].ShotsHit + ":" + CheckSteamIDForKillInfo[playa.SteamId].ShotsFired + ":" + CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths();
+					formatedString = formatedString + "\n" + SteamIDandPlayerInfo.Value.ShotsHit + ":" + SteamIDandPlayerInfo.Value.ShotsFired + ":" + SteamIDandPlayerInfo.Value.GetAmountOfDeaths();
 					writeData.Write(formatedString);
 				}
 
@@ -154,30 +148,28 @@ namespace KillInfo
 			{
 				return;
 			}
-			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
-			{
-				if (playa.SteamId == steamid && dir.Length >= 1)
-				{
-					using (StreamWriter writeData = new StreamWriter(dir + steamid + ".txt", false))
-					{
-						string formatedString = "";
-						if (playerinfo == null)
-						{
-							playerinfo = new PlayerInfo();
-						}
 
-						foreach (Smod2.API.DamageType dmgtyp in (Smod2.API.DamageType[])Enum.GetValues(typeof(Smod2.API.DamageType)))
-						{
-							if(playerinfo.GetKillByDamageType(dmgtyp) >= 1)
-							{
-								formatedString = formatedString + (int)dmgtyp + ":" + playerinfo.GetKillByDamageType(dmgtyp) + ",";
-							}
-						}
-						formatedString = formatedString + "\n" + playerinfo.ShotsHit + ":" + playerinfo.ShotsFired + ":" + playerinfo.GetAmountOfDeaths();
-						writeData.Write(formatedString);
+			if (dir.Length >= 1)
+			{
+				using (StreamWriter writeData = new StreamWriter(dir + steamid + ".txt", false))
+				{
+					string formatedString = "";
+					if (playerinfo == null)
+					{
+						playerinfo = new PlayerInfo();
 					}
-					break;
+
+					foreach (Smod2.API.DamageType dmgtyp in (Smod2.API.DamageType[])Enum.GetValues(typeof(Smod2.API.DamageType)))
+					{
+						if (playerinfo.GetKillByDamageType(dmgtyp) >= 1)
+						{
+							formatedString = formatedString + (int)dmgtyp + ":" + playerinfo.GetKillByDamageType(dmgtyp) + ",";
+						}
+					}
+					formatedString = formatedString + "\n" + playerinfo.ShotsHit + ":" + playerinfo.ShotsFired + ":" + playerinfo.GetAmountOfDeaths();
+					writeData.Write(formatedString);
 				}
+
 			}
 		}
 

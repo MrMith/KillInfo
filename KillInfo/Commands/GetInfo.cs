@@ -1,9 +1,12 @@
 ﻿using Smod2;
 using Smod2.API;
 using Smod2.Commands;
+
 using KillInfo.Managers;
-using System.Collections.Generic;
+
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace KillInfo.Commands
 {
@@ -29,12 +32,12 @@ namespace KillInfo.Commands
 		
 		public string[] OnCall(ICommandSender sender, string[] args)
 		{
-			PlayerInfo playerInfo = eventLogic.KillReadAndWrite.ReadPlayerBySteamID(args[0]);
-			if(playerInfo == null)
+			if(!File.Exists(eventLogic.KillReadAndWrite.MakeSureDirExistAndGetDir() + args[0] + ".txt"))
 			{
-				return new string[] { "Player not found!" };
+				return new string[] {"Player was not found."};
 			}
 
+			PlayerInfo playerInfo = eventLogic.KillReadAndWrite.ReadPlayerBySteamID(args[0]);
 			List<string> StringToReturn = new List<string>()
 			{
 				""
@@ -58,7 +61,7 @@ namespace KillInfo.Commands
 			{
 				StringToReturn.Add($"Their KDR is {(float)playerInfo.GetAmountOfKills() / (float)playerInfo.GetAmountOfDeaths()} ({playerInfo.GetAmountOfKills()} / {playerInfo.GetAmountOfDeaths()}).");
 			}
-
+			
 			return StringToReturn.ToArray();
 		}
 	}
