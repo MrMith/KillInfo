@@ -20,4 +20,11 @@ Put KillInfo.dll under the release tab into sm_plugins folder.
 | Command(s)                 | Value Type      | Description                              |
 |   :---:                    |     :---:       |    :---:                                 |
 | ki_version                 | N/A             | Get the version of this plugin           |
-| ki_disable                 | N/A             | Disables the entire KillInfo plugin.    |
+| ki_disable                 | N/A             | Disables the entire KillInfo plugin.     |
+| ki_getinfo                 | String (SteamID64)   | Gets player's information and works on offline players. Example: ki_getinfo 76561198103930293     |
+
+## Client Commands 
+### This is used by typing .killinfo in client console (One you open with `)
+| Command(s)                 | Value Type      | Description                              |
+|   :---:                    |     :---:       |    :---:                                 |
+| killinfo                   | N/A             |  Returns trimmed down information about kills. (Doesn't include current round information) |

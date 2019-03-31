@@ -24,13 +24,13 @@ namespace KillInfo
 		/// <summary>
 		/// Goes through every player in the server and reads their stats from their file.
 		/// </summary>
-		public void ReadAllPlayers(Dictionary<string,PlayerInfo> CheckSteamIDForKillInfo)
+		public Dictionary<string,PlayerInfo> ReadAllPlayers(Dictionary<string,PlayerInfo> CheckSteamIDForKillInfo)
 		{
 			string dir = MakeSureDirExistAndGetDir();
 
 			if (dir.Length == 0)
 			{
-				return;
+				return null;
 			}
 
 			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
@@ -60,6 +60,7 @@ namespace KillInfo
 					}
 				}
 			}
+			return CheckSteamIDForKillInfo;
 		}
 
 		/// <summary>
@@ -67,7 +68,7 @@ namespace KillInfo
 		/// </summary>
 		/// <param name="steamid">User's steamid</param>
 		/// <param name="playerinfo">User's information about kills,deaths and shooting.</param>
-		public PlayerInfo ReadPlayerBySteamID(string steamid,PlayerInfo playerinfo)
+		public PlayerInfo ReadPlayerBySteamID(string steamid)
 		{
 			string dir = MakeSureDirExistAndGetDir();
 
@@ -75,16 +76,12 @@ namespace KillInfo
 			{
 				return null;
 			}
-
+			PlayerInfo playerinfo = null;
 			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
 			{
 				if (playa.SteamId == steamid && File.Exists(dir + playa.SteamId + ".txt"))
 				{
-					if(playerinfo == null)
-					{
-						playerinfo = new PlayerInfo();
-					}
-
+					playerinfo = new PlayerInfo();
 					string fileText = File.ReadAllText(dir + playa.SteamId+".txt");
 					string[] splitbyNewLine = fileText.Split('\n');
 					string[] splitByDamageTypesKills = splitbyNewLine[0].Split(',');
@@ -190,15 +187,15 @@ namespace KillInfo
 		/// <returns></returns>
 		public string MakeSureDirExistAndGetDir()
 		{
-			if (configOptions.killinfo_dir == "appdata")
+			if (configOptions.killinfo_dir == "config")
 			{
-				if (!Directory.Exists(FileManager.GetAppFolder() + "\\KillInfo"))
+				if (!Directory.Exists(FileManager.GetAppFolder() + "\\KillInfo\\"))
 				{
-					Directory.CreateDirectory(FileManager.GetAppFolder() + "\\KillInfo");
+					Directory.CreateDirectory(FileManager.GetAppFolder() + "\\KillInfo\\");
 				}
-				if (!Directory.Exists(FileManager.GetAppFolder() + "\\KillInfo\\PlayerInfo"))
+				if (!Directory.Exists(FileManager.GetAppFolder() + "\\KillInfo\\PlayerInfo\\"))
 				{
-					Directory.CreateDirectory(FileManager.GetAppFolder() + "\\KillInfo\\PlayerInfo");
+					Directory.CreateDirectory(FileManager.GetAppFolder() + "\\KillInfo\\PlayerInfo\\");
 				}
 				return FileManager.GetAppFolder() + "\\KillInfo\\PlayerInfo\\";
 			}
@@ -208,7 +205,12 @@ namespace KillInfo
 				{
 					return "";
 				}
-				return configOptions.killinfo_dir;
+
+				if(configOptions.killinfo_dir[configOptions.killinfo_dir.Length-1] == '\\')
+				{
+					return configOptions.killinfo_dir;
+				}
+				return configOptions.killinfo_dir + "\\";
 			}
 		}
 	}
