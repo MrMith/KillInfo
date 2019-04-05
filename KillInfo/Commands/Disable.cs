@@ -23,7 +23,7 @@ namespace KillInfo.Commands
 
 		public string[] OnCall(ICommandSender sender, string[] args)
 		{
-			plugin.pluginManager.DisablePlugin(plugin);
+			plugin.PluginManager.DisablePlugin(plugin);
 			return new string[] { "Disabled " + plugin.Details.name };
 		}
 	}

@@ -8,7 +8,7 @@ using KillInfo.Managers;
 
 namespace KillInfo
 {
-	class KillInfoEventLogic : IEventHandlerPlayerDie,IEventHandlerRoundEnd,IEventHandlerShoot, IEventHandlerWaitingForPlayers, IEventHandlerCallCommand
+	class KillInfoEventLogic : IEventHandlerPlayerDie,IEventHandlerRoundEnd,IEventHandlerShoot, IEventHandlerWaitingForPlayers, IEventHandlerCallCommand, IEventHandlerPlayerJoin
 	{
 		public Dictionary<string, PlayerInfo> CheckSteamIDForKillInfo = new Dictionary<string, PlayerInfo>();
 
@@ -17,6 +17,7 @@ namespace KillInfo
 		public ConfigOptions configOptions = new ConfigOptions();
 
 		readonly Plugin plugin;
+
 		public KillInfoEventLogic(Plugin plugin)
 		{
 			this.plugin = plugin;
@@ -24,21 +25,11 @@ namespace KillInfo
 		
 		public void OnPlayerDie(PlayerDeathEvent ev)
 		{
-			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
-			{
-				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
-			}
-
 			CheckSteamIDForKillInfo[ev.Player.SteamId].AddDeath(ev.DamageTypeVar);
 
 			if (ev.Killer != null && ev.Player.SteamId != ev.Killer.SteamId)
 			{
-				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Killer.SteamId))
-				{
-					CheckSteamIDForKillInfo[ev.Killer.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId);
-				}
 				CheckSteamIDForKillInfo[ev.Killer.SteamId].AddKill(ev.DamageTypeVar);
-				ev.Killer.PersonalBroadcast(2, $"{CheckSteamIDForKillInfo[ev.Killer.SteamId].GetKillByDamageType(ev.DamageTypeVar)} (+{ CheckSteamIDForKillInfo[ev.Killer.SteamId].GetCurrentKillsByDamageType(ev.DamageTypeVar)}):Kills with {ev.DamageTypeVar.ToString()}", true);
 			}
 		}
 
@@ -51,13 +42,7 @@ namespace KillInfo
 
 			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
 			{
-
-				if (!CheckSteamIDForKillInfo.ContainsKey(playa.SteamId))
-				{
-					CheckSteamIDForKillInfo[playa.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId);
-				}
-		
-				playa.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)}\\{CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
+				playa.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)} / {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
 				{
@@ -84,11 +69,6 @@ namespace KillInfo
 
 		public void OnShoot(PlayerShootEvent ev)
 		{
-			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
-			{
-				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
-			}
-
 			if (ev.Target != null)
 			{
 				CheckSteamIDForKillInfo[ev.Player.SteamId].AddShot(true);
@@ -101,14 +81,8 @@ namespace KillInfo
 
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
-			plugin.Info(ev.Command);
 			if(ev.Command.ToLower() == "killinfo")
 			{
-				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
-				{
-					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
-				}
-
 				ev.Player.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[ev.Player.SteamId].GetShotInfo(2)}%.");
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
@@ -134,7 +108,7 @@ namespace KillInfo
 		{
 			if (plugin.GetConfigBool("ki_disable"))
 			{
-				plugin.pluginManager.DisablePlugin(plugin);
+				plugin.PluginManager.DisablePlugin(plugin);
 			}
 			configOptions.SetUp(plugin);
 			KillReadAndWrite.SetUp(configOptions);
@@ -143,6 +117,14 @@ namespace KillInfo
 			if (KillReadAndWrite.MakeSureDirExistAndGetDir().Length == 0)
 			{
 				plugin.Error("ki_playerinfodir is not set correctly. Nothing is going to be saved.");
+			}
+		}
+
+		public void OnPlayerJoin(PlayerJoinEvent ev)
+		{
+			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
+			{
+				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 			}
 		}
 	}
