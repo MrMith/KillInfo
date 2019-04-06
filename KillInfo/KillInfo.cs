@@ -9,7 +9,7 @@ namespace KillInfo
 	name = "KillInfo",
 	description = "Displays information about Player's kills through their console and personal broadcast.",
 	id = "Mith.killinfo",
-	version = "0.0.5",
+	version = "0.0.4",
 	SmodMajor = 3,
 	SmodMinor = 4,
 	SmodRevision = 0
