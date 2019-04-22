@@ -38,7 +38,7 @@ namespace KillInfo
 		public string killline = "You've gotten ALLTIMEKILLS (+CURRENTKILLS this round) kill(s) with CURRENTDMGTYPE.";
 
 		[ConfigOption]
-		public string kdrline = "Your KDR is KDRLINE. ( DEATHS / KILLS )";
+		public string kdrline = "Your KDR is KDRLINE. ( KILLS / DEATHS )";
 
 		[ConfigOption]
 		public string endofroundline = "Check your console for more detailed information about kills, death and accuracy! Press ~ to access!";

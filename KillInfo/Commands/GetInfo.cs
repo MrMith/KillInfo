@@ -62,7 +62,7 @@ namespace KillInfo.Commands
 			}
 
 			StringBuilder KDRLine = new StringBuilder(eventLogic.configOptions.KDRLine);
-			KDRLine.Replace("KDRLINE", (playerInfo.GetAmountOfKills(true) / playerInfo.GetAmountOfDeaths(true)).ToString());
+			KDRLine.Replace("KDRLINE", ((double)playerInfo.GetAmountOfKills(true) / (double)playerInfo.GetAmountOfDeaths(true)).ToString());
 			KDRLine.Replace("DEATHS", playerInfo.GetAmountOfDeaths().ToString());
 			KDRLine.Replace("KILLS", playerInfo.GetAmountOfKills().ToString());
 			StringToReturn.Add(KDRLine.ToString());

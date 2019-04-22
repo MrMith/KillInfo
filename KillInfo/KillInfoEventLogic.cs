@@ -79,7 +79,7 @@ namespace KillInfo
 				}
 
 				StringBuilder KDRLine = new StringBuilder(configOptions.KDRLine);
-				KDRLine.Replace("KDRLINE", (CurrentPlayerInfo.GetAmountOfKills(true) / CurrentPlayerInfo.GetAmountOfDeaths()).ToString());
+				KDRLine.Replace("KDRLINE", ((double)CurrentPlayerInfo.GetAmountOfKills(true) / (double)CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
 				KDRLine.Replace("DEATHS", CurrentPlayerInfo.GetAmountOfDeaths().ToString());
 				KDRLine.Replace("KILLS", CurrentPlayerInfo.GetAmountOfKills().ToString());
 				player.SendConsoleMessage(KDRLine.ToString());
@@ -137,7 +137,7 @@ namespace KillInfo
 				}
 
 				StringBuilder KDRLine = new StringBuilder(configOptions.KDRLine);
-				KDRLine.Replace("KDRLINE", (CurrentPlayerInfo.GetAmountOfKills(true) / CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
+				KDRLine.Replace("KDRLINE", ((double)CurrentPlayerInfo.GetAmountOfKills(true) / (double)CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
 				KDRLine.Replace("DEATHS", CurrentPlayerInfo.GetAmountOfDeaths().ToString());
 				KDRLine.Replace("KILLS", CurrentPlayerInfo.GetAmountOfKills().ToString());
 				ev.Player.SendConsoleMessage(KDRLine.ToString());
