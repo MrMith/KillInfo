@@ -18,7 +18,7 @@ namespace KillInfo
 	)]
 	class KillInfo : Plugin
 	{
-		public static KillInfo plugin;
+		public KillInfo plugin;
 
 		KillInfoEventLogic eventLogic;
 
@@ -32,10 +32,10 @@ namespace KillInfo
 		public string playerinfodir = "config";
 
 		[ConfigOption]
-		public string accuracyline = "Your accuracy is ACCURACYPERCENT%. ( SHOTSFIRED / SHOTSHIT )";
+		public string accuracyline = "Your accuracy is ACCURACYPERCENT%. ( SHOTSHIT / SHOTSFIRED )";
 
 		[ConfigOption]
-		public string killline = "You've gotten ALLTIMEKILLS (+ CURRENTKILLS this round) kill(s) with CURRENTDMGTYPE.";
+		public string killline = "You've gotten ALLTIMEKILLS (+CURRENTKILLS this round) kill(s) with CURRENTDMGTYPE.";
 
 		[ConfigOption]
 		public string kdrline = "Your KDR is KDRLINE. ( DEATHS / KILLS )";

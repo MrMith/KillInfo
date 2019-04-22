@@ -62,8 +62,8 @@ namespace KillInfo
 
 				StringBuilder AccuracyMessage = new StringBuilder(configOptions.AccuracyLine);
 				AccuracyMessage.Replace("ACCURACYPERCENT", CurrentPlayerInfo.GetShotInfo(2).ToString());
-				AccuracyMessage.Replace("SHOTSFIRED", CurrentPlayerInfo.GetShotInfo(1).ToString());
-				AccuracyMessage.Replace("SHOTSHIT", CurrentPlayerInfo.GetShotInfo(0).ToString());
+				AccuracyMessage.Replace("SHOTSFIRED", CurrentPlayerInfo.GetShotInfo(0).ToString());
+				AccuracyMessage.Replace("SHOTSHIT", CurrentPlayerInfo.GetShotInfo(1).ToString());
 				player.SendConsoleMessage(AccuracyMessage.ToString());
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
@@ -120,8 +120,8 @@ namespace KillInfo
 
 				StringBuilder AccuracyMessage = new StringBuilder(configOptions.AccuracyLine);
 				AccuracyMessage.Replace("ACCURACYPERCENT", CurrentPlayerInfo.GetShotInfo(2).ToString());
-				AccuracyMessage.Replace("SHOTSFIRED", CurrentPlayerInfo.GetShotInfo(1).ToString());
-				AccuracyMessage.Replace("SHOTSHIT", CurrentPlayerInfo.GetShotInfo(0).ToString());
+				AccuracyMessage.Replace("SHOTSFIRED", CurrentPlayerInfo.GetShotInfo(0).ToString());
+				AccuracyMessage.Replace("SHOTSHIT", CurrentPlayerInfo.GetShotInfo(1).ToString());
 				ev.Player.SendConsoleMessage(AccuracyMessage.ToString());
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))

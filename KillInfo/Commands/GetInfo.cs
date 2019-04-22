@@ -45,8 +45,8 @@ namespace KillInfo.Commands
 
 			StringBuilder AccuracyMessage = new StringBuilder(eventLogic.configOptions.AccuracyLine);
 			AccuracyMessage.Replace("ACCURACYPERCENT", playerInfo.GetShotInfo(2).ToString());
-			AccuracyMessage.Replace("SHOTSFIRED", playerInfo.GetShotInfo(1).ToString());
-			AccuracyMessage.Replace("SHOTSHIT", playerInfo.GetShotInfo(0).ToString());
+			AccuracyMessage.Replace("SHOTSFIRED", playerInfo.GetShotInfo(0).ToString());
+			AccuracyMessage.Replace("SHOTSHIT", playerInfo.GetShotInfo(1).ToString());
 			StringToReturn.Add(AccuracyMessage.ToString());
 
 			foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
