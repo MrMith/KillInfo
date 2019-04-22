@@ -77,7 +77,7 @@ namespace KillInfo.Managers
 		/// Returns total amount of deaths.
 		/// </summary>
 		/// <returns></returns>
-		public int GetAmountOfDeaths()
+		public int GetAmountOfDeaths(bool CheckForZero = false)
 		{
 			int Deaths = 0;
 			foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
@@ -87,6 +87,13 @@ namespace KillInfo.Managers
 					Deaths += DeathCounter[dmgtype];
 				}
 			}
+			if (CheckForZero)
+			{
+				if (Deaths <= 0)
+				{
+					return 1;
+				}
+			}
 			return Deaths;
 		}
 
@@ -94,7 +101,7 @@ namespace KillInfo.Managers
 		/// Returns total amount of kills this person has gotten.
 		/// </summary>
 		/// <returns></returns>
-		public int GetAmountOfKills()
+		public int GetAmountOfKills(bool CheckForZero = false)
 		{
 			int Kills = 0;
 			foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
@@ -102,6 +109,13 @@ namespace KillInfo.Managers
 				if (KillCounter.ContainsKey(dmgtype))
 				{
 					Kills += KillCounter[dmgtype];
+				}
+			}
+			if(CheckForZero)
+			{
+				if(Kills <= 0)
+				{
+					return 1;
 				}
 			}
 			return Kills;
@@ -143,7 +157,7 @@ namespace KillInfo.Managers
 		/// <summary>
 		/// Gets information about how many shots they've fired, hit or their accuracy.
 		/// </summary>
-		/// <param name="FiredHitOrBoth">1 = shots fired, 2 = shots hit, 3 = accuracy</param>
+		/// <param name="FiredHitOrBoth">0 = shots fired, 1 = shots hit, 2 = accuracy</param>
 		/// <returns></returns>
 		public float GetShotInfo(int FiredHitOrBoth)
 		{

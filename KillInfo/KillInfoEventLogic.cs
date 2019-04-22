@@ -3,6 +3,7 @@ using Smod2.Events;
 using Smod2.EventHandlers;
 using Smod2.API;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using KillInfo.Managers;
 
@@ -34,6 +35,11 @@ namespace KillInfo
 
 			if (ev.Killer != null && ev.Player.SteamId != ev.Killer.SteamId)
 			{
+				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Killer.SteamId))
+				{
+					CheckSteamIDForKillInfo[ev.Killer.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId);
+				}
+
 				CheckSteamIDForKillInfo[ev.Killer.SteamId].AddKill(ev.DamageTypeVar);
 			}
 		}
@@ -45,35 +51,43 @@ namespace KillInfo
 				return;
 			}
 
-			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
+			foreach (Player player in Smod2.PluginManager.Manager.Server.GetPlayers())
 			{
-				if (!CheckSteamIDForKillInfo.ContainsKey(playa.SteamId))
+				if (!CheckSteamIDForKillInfo.ContainsKey(player.SteamId))
 				{
-					CheckSteamIDForKillInfo[playa.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId);
+					CheckSteamIDForKillInfo[player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(player.SteamId);
 				}
 
-				playa.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)} / {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
+				PlayerInfo CurrentPlayerInfo = CheckSteamIDForKillInfo[player.SteamId];
+
+				StringBuilder AccuracyMessage = new StringBuilder(configOptions.AccuracyLine);
+				AccuracyMessage.Replace("ACCURACYPERCENT", CurrentPlayerInfo.GetShotInfo(2).ToString());
+				AccuracyMessage.Replace("SHOTSFIRED", CurrentPlayerInfo.GetShotInfo(1).ToString());
+				AccuracyMessage.Replace("SHOTSHIT", CurrentPlayerInfo.GetShotInfo(0).ToString());
+				player.SendConsoleMessage(AccuracyMessage.ToString());
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
 				{
-					if (CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtype) != 0)
+					if (CurrentPlayerInfo.GetKillByDamageType(dmgtype) != 0)
 					{
-						playa.SendConsoleMessage("You've gotten " + CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtype) + "(+" + CheckSteamIDForKillInfo[playa.SteamId].GetCurrentKillsByDamageType(dmgtype) + " this round) kill(s) with " + dmgtype.ToString().Replace("_", "-") + ".");
+						StringBuilder KillLine = new StringBuilder(configOptions.KillLine);
+						KillLine.Replace("ALLTIMEKILLS", CurrentPlayerInfo.GetKillByDamageType(dmgtype).ToString());
+						KillLine.Replace("CURRENTKILLS", CurrentPlayerInfo.GetCurrentKillsByDamageType(dmgtype).ToString());
+						KillLine.Replace("CURRENTDMGTYPE", dmgtype.ToString().Replace("_", "-"));
+						player.SendConsoleMessage(KillLine.ToString());
 					}
 				}
-				
-				if (CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths() == 0)
-				{
-					playa.SendConsoleMessage("Your KDR is " + CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() + ". ");
-				}
-				else
-				{
-					playa.SendConsoleMessage($"Your KDR is {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}. ({(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills()} / {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}) ");
-				}
-				CheckSteamIDForKillInfo[playa.SteamId].KillsThisRoundCounter.Clear();
+
+				StringBuilder KDRLine = new StringBuilder(configOptions.KDRLine);
+				KDRLine.Replace("KDRLINE", (CurrentPlayerInfo.GetAmountOfKills(true) / CurrentPlayerInfo.GetAmountOfDeaths()).ToString());
+				KDRLine.Replace("DEATHS", CurrentPlayerInfo.GetAmountOfDeaths().ToString());
+				KDRLine.Replace("KILLS", CurrentPlayerInfo.GetAmountOfKills().ToString());
+				player.SendConsoleMessage(KDRLine.ToString());
+
+				CurrentPlayerInfo.KillsThisRoundCounter.Clear();
 			}
 			KillReadAndWrite.SaveAllPlayers(CheckSteamIDForKillInfo);
-			Smod2.PluginManager.Manager.Server.Map.Broadcast(5, "Check your console for more detailed information about kills, death and accuracy! Press ~ to access!", true);
+			Smod2.PluginManager.Manager.Server.Map.Broadcast(5, configOptions.EndOfRoundLine, true);
 			configOptions.CheckForFalseRoundEnd = false;
 		}
 
@@ -96,31 +110,39 @@ namespace KillInfo
 
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
-			if(ev.Command.ToLower() == "killinfo")
+			if(ev.Command.ToLower() == configOptions.CallCommandName)
 			{
 				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
 				{
-					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
+					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite?.ReadPlayerBySteamID(ev.Player.SteamId);
 				}
+				PlayerInfo CurrentPlayerInfo = CheckSteamIDForKillInfo[ev.Player.SteamId];
 
-				ev.Player.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[ev.Player.SteamId].GetShotInfo(2)}%.");
+				StringBuilder AccuracyMessage = new StringBuilder(configOptions.AccuracyLine);
+				AccuracyMessage.Replace("ACCURACYPERCENT", CurrentPlayerInfo.GetShotInfo(2).ToString());
+				AccuracyMessage.Replace("SHOTSFIRED", CurrentPlayerInfo.GetShotInfo(1).ToString());
+				AccuracyMessage.Replace("SHOTSHIT", CurrentPlayerInfo.GetShotInfo(0).ToString());
+				ev.Player.SendConsoleMessage(AccuracyMessage.ToString());
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
 				{
-					if (CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) != 0)
+					if (CurrentPlayerInfo.GetKillByDamageType(dmgtype) != 0)
 					{
-						ev.Player.SendConsoleMessage("You've gotten " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) +" kill(s) with " + dmgtype.ToString().Replace("_", "-") + ".");
+						StringBuilder KillLine = new StringBuilder(configOptions.KillLine);
+						KillLine.Replace("ALLTIMEKILLS", CurrentPlayerInfo.GetKillByDamageType(dmgtype).ToString());
+						KillLine.Replace("CURRENTKILLS", CurrentPlayerInfo.GetCurrentKillsByDamageType(dmgtype).ToString());
+						KillLine.Replace("CURRENTDMGTYPE", dmgtype.ToString().Replace("_", "-"));
+						ev.Player.SendConsoleMessage(KillLine.ToString());
 					}
 				}
 
-				if (CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths() == 0)
-				{
-					ev.Player.SendConsoleMessage("Your KDR is " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() + ". ");
-				}
-				else
-				{
-					ev.Player.SendConsoleMessage($"Your KDR is {(float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths()}.");
-				}
+				StringBuilder KDRLine = new StringBuilder(configOptions.KDRLine);
+				KDRLine.Replace("KDRLINE", (CurrentPlayerInfo.GetAmountOfKills(true) / CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
+				KDRLine.Replace("DEATHS", CurrentPlayerInfo.GetAmountOfDeaths().ToString());
+				KDRLine.Replace("KILLS", CurrentPlayerInfo.GetAmountOfKills().ToString());
+				ev.Player.SendConsoleMessage(KDRLine.ToString());
+
+				ev.ReturnMessage = "Got data for " + ev.Player.Name;
 			}
 		}
 

@@ -33,31 +33,35 @@ namespace KillInfo
 				return null;
 			}
 
-			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
+			foreach (Player player in Smod2.PluginManager.Manager.Server.GetPlayers())
 			{
-				if (File.Exists(dir + playa.SteamId + ".txt"))
+				if (File.Exists(dir + player.SteamId + ".txt"))
 				{
-					if (!CheckSteamIDForKillInfo.ContainsKey(playa.SteamId))
+					if (!CheckSteamIDForKillInfo.ContainsKey(player.SteamId))
 					{
-						CheckSteamIDForKillInfo[playa.SteamId] = new PlayerInfo();
+						CheckSteamIDForKillInfo[player.SteamId] = new PlayerInfo();
 					}
-					string[] splitbyNewLine = File.ReadAllText(dir + playa.SteamId+".txt").Split('\n');
+					string[] splitbyNewLine = File.ReadAllText(dir + player.SteamId+".txt").Split('\n');
 					string[] splitByDamageTypesKills = splitbyNewLine[0].Split(',');
 					foreach (string str in splitByDamageTypesKills)
 					{
 						string[] damageTypeAndKills = str.Split(':');
 						if (Int32.TryParse(damageTypeAndKills[0], out int value) && Int32.TryParse(damageTypeAndKills[1], out int value2))
 						{
-							CheckSteamIDForKillInfo[playa.SteamId].SetKill((DamageType)value, value2);
+							CheckSteamIDForKillInfo[player.SteamId].SetKill((DamageType)value, value2);
 						}
 					}
 					string[] shotsHitsandDeaths = splitbyNewLine[1].Split(':');
 					if (Int32.TryParse(shotsHitsandDeaths[0], out int value3) && Int32.TryParse(shotsHitsandDeaths[1], out int value4) && Int32.TryParse(shotsHitsandDeaths[2], out int value5))
 					{
-						CheckSteamIDForKillInfo[playa.SteamId].ShotsFired = value4;
-						CheckSteamIDForKillInfo[playa.SteamId].ShotsHit = value3;
-						CheckSteamIDForKillInfo[playa.SteamId].SetDeath(DamageType.NONE, value5);
+						CheckSteamIDForKillInfo[player.SteamId].ShotsFired = value4;
+						CheckSteamIDForKillInfo[player.SteamId].ShotsHit = value3;
+						CheckSteamIDForKillInfo[player.SteamId].SetDeath(DamageType.NONE, value5);
 					}
+				}
+				else
+				{
+					CheckSteamIDForKillInfo[player.SteamId] = new PlayerInfo();
 				}
 			}
 			return CheckSteamIDForKillInfo;
@@ -77,10 +81,9 @@ namespace KillInfo
 				return new PlayerInfo();
 			}
 
-			PlayerInfo playerinfo = new PlayerInfo();
-
 			if (File.Exists(dir + steamid + ".txt"))
 			{
+				PlayerInfo playerinfo = new PlayerInfo();
 				string fileText = File.ReadAllText(dir + steamid + ".txt");
 				string[] splitbyNewLine = fileText.Split('\n');
 				string[] splitByDamageTypesKills = splitbyNewLine[0].Split(',');
@@ -100,9 +103,12 @@ namespace KillInfo
 					playerinfo.ShotsHit = value3;
 					playerinfo.SetDeath(DamageType.FALLDOWN, value5);
 				}
+				return playerinfo;
 			}
-			
-			return playerinfo;
+			else
+			{
+				return new PlayerInfo();
+			}
 		}
 		
 		/// <summary>
@@ -115,8 +121,10 @@ namespace KillInfo
 			{
 				return;
 			}
-			foreach (var SteamIDandPlayerInfo in CheckSteamIDForKillInfo)
+
+			foreach (KeyValuePair<string,PlayerInfo> SteamIDandPlayerInfo in CheckSteamIDForKillInfo)
 			{
+				if (SteamIDandPlayerInfo.Key.Length == 0) continue;
 				using (StreamWriter writeData = new StreamWriter(dir + SteamIDandPlayerInfo.Key +".txt", false))
 				{
 					string formatedString = "";
@@ -131,7 +139,6 @@ namespace KillInfo
 					formatedString = formatedString + "\n" + SteamIDandPlayerInfo.Value.ShotsHit + ":" + SteamIDandPlayerInfo.Value.ShotsFired + ":" + SteamIDandPlayerInfo.Value.GetAmountOfDeaths();
 					writeData.Write(formatedString);
 				}
-
 			}
 		}
 
@@ -142,6 +149,8 @@ namespace KillInfo
 		/// <param name="playerinfo">User's information about kills,deaths and shooting.</param>
 		public void SavePlayerBySteamID(string steamid, PlayerInfo playerinfo)
 		{
+			if (steamid.Length == 0) return;
+
 			string dir = MakeSureDirExistAndGetDir();
 
 			if(dir.Length == 0)
@@ -172,14 +181,13 @@ namespace KillInfo
 
 			}
 		}
-
 		/// <summary>
 		/// Gets directory where to save all information about players
 		/// </summary>
 		/// <returns></returns>
 		public string MakeSureDirExistAndGetDir()
 		{
-			if (configOptions.killinfo_dir == "config")
+			if (configOptions.KillInfo_Dir == "config")
 			{
 				if (!Directory.Exists(FileManager.GetAppFolder() + "\\KillInfo\\"))
 				{
@@ -193,16 +201,16 @@ namespace KillInfo
 			}
 			else
 			{
-				if (!Directory.Exists(configOptions.killinfo_dir))
+				if (!Directory.Exists(configOptions.KillInfo_Dir))
 				{
 					return "";
 				}
 
-				if(configOptions.killinfo_dir[configOptions.killinfo_dir.Length-1] == '\\')
+				if(configOptions.KillInfo_Dir[configOptions.KillInfo_Dir.Length-1] == '\\')
 				{
-					return configOptions.killinfo_dir;
+					return configOptions.KillInfo_Dir;
 				}
-				return configOptions.killinfo_dir + "\\";
+				return configOptions.KillInfo_Dir + "\\";
 			}
 		}
 	}

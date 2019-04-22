@@ -1,10 +1,9 @@
 ﻿using Smod2;
 using Smod2.API;
 using Smod2.Commands;
-
 using KillInfo.Managers;
-
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.IO;
 
@@ -12,8 +11,8 @@ namespace KillInfo.Commands
 {
 	class KillInfo_GetInfo : ICommandHandler
 	{
-		private Plugin plugin;
-		KillInfoEventLogic eventLogic;
+		private readonly Plugin plugin;
+		public KillInfoEventLogic eventLogic;
 		public KillInfo_GetInfo(Plugin plugin,KillInfoEventLogic killInfoEvent)
 		{
 			this.plugin = plugin;
@@ -37,31 +36,37 @@ namespace KillInfo.Commands
 				return new string[] {"Player was not found."};
 			}
 
-			PlayerInfo playerInfo = eventLogic.KillReadAndWrite.ReadPlayerBySteamID(args[0]);
+			PlayerInfo playerInfo = eventLogic.KillReadAndWrite?.ReadPlayerBySteamID(args[0]);
+
 			List<string> StringToReturn = new List<string>()
 			{
 				""
 			};
-			
-			StringToReturn.Add($"Their accuracy is {playerInfo.GetShotInfo(2)}% ({playerInfo.GetShotInfo(1)}/{playerInfo.GetShotInfo(0)}).");
-			
+
+			StringBuilder AccuracyMessage = new StringBuilder(eventLogic.configOptions.AccuracyLine);
+			AccuracyMessage.Replace("ACCURACYPERCENT", playerInfo.GetShotInfo(2).ToString());
+			AccuracyMessage.Replace("SHOTSFIRED", playerInfo.GetShotInfo(1).ToString());
+			AccuracyMessage.Replace("SHOTSHIT", playerInfo.GetShotInfo(0).ToString());
+			StringToReturn.Add(AccuracyMessage.ToString());
+
 			foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
 			{
 				if (playerInfo.GetKillByDamageType(dmgtype) != 0)
 				{
-					StringToReturn.Add("They have gotten " + playerInfo.GetKillByDamageType(dmgtype) + $"({playerInfo.GetCurrentKillsByDamageType(dmgtype)} this round) kill(s) with " + dmgtype.ToString().Replace("_", "-") + ".");
+					StringBuilder KillLine = new StringBuilder(eventLogic.configOptions.KillLine);
+					KillLine.Replace("ALLTIMEKILLS", playerInfo.GetKillByDamageType(dmgtype).ToString());
+					KillLine.Replace("CURRENTKILLS", playerInfo.GetCurrentKillsByDamageType(dmgtype).ToString());
+					KillLine.Replace("CURRENTDMGTYPE", dmgtype.ToString().Replace("_", "-"));
+					StringToReturn.Add(KillLine.ToString());
 				}
 			}
 
-			if (playerInfo.GetAmountOfDeaths() == 0)
-			{
-				StringToReturn.Add("Their KDR is " + playerInfo.GetAmountOfKills() + ". ");
-			}
-			else
-			{
-				StringToReturn.Add($"Their KDR is {(float)playerInfo.GetAmountOfKills() / (float)playerInfo.GetAmountOfDeaths()} ({playerInfo.GetAmountOfKills()} / {playerInfo.GetAmountOfDeaths()}).");
-			}
-			
+			StringBuilder KDRLine = new StringBuilder(eventLogic.configOptions.KDRLine);
+			KDRLine.Replace("KDRLINE", (playerInfo.GetAmountOfKills(true) / playerInfo.GetAmountOfDeaths(true)).ToString());
+			KDRLine.Replace("DEATHS", playerInfo.GetAmountOfDeaths().ToString());
+			KDRLine.Replace("KILLS", playerInfo.GetAmountOfKills().ToString());
+			StringToReturn.Add(KDRLine.ToString());
+
 			return StringToReturn.ToArray();
 		}
 	}

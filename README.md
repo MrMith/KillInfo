@@ -13,6 +13,12 @@ Put KillInfo.dll under the release tab into sm_plugins folder.
 |   :---:                    |     :---:       |    :---:      |    :---:    |
 | ki_playerinfodir           | String          | config        | Path to store information for KillInfo plugin. Default is where config is. %appdata%\SCP Secret Laboratory\ for windows and /home/USER/.config/SCP Secret Laboratory/ for linux. |
 | ki_disable                 | Boolean         | false         | Disables the entire KillInfo plugin. |
+| ki_accuracyline            | String          | See this page | Shows player their accuracy in end of round console, when they use the client command or in ki_getinfo. |
+| ki_killline                | String          | See this page | Shows player their kills in end of round console, when they use the client command or in ki_getinfo.  |
+| ki_kdrline                 | String          | See this page | Shows player their kill death ratio in end of round console, when they use the client command or in ki_getinfo.  |
+| ki_endofroundline          | String          | See this page | Message that is broadcasted to everyone on round end.  |
+| ki_callcommandname         | String          | killinfo      | Name for command used so player's can see their own stats. This is entered in the console you press ~ to open. |
+
 
 ## Commands
 
@@ -26,4 +32,4 @@ Put KillInfo.dll under the release tab into sm_plugins folder.
 ### This is used by typing .killinfo in client console (One you open with `)
 | Command(s)                 | Value Type      | Description                              |
 |   :---:                    |     :---:       |    :---:                                 |
-| killinfo                   | N/A             |  Returns trimmed down information about kills. (Doesn't include current round information) |
+| killinfo                   | N/A             |  Returns information about kills. |
