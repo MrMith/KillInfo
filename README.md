@@ -13,10 +13,10 @@ Put KillInfo.dll under the release tab into sm_plugins folder.
 |   :---:                    |     :---:       |    :---:      |    :---:    |
 | ki_playerinfodir           | String          | config        | Path to store information for KillInfo plugin. Default is where config is. %appdata%\SCP Secret Laboratory\ for windows and /home/USER/.config/SCP Secret Laboratory/ for linux. |
 | ki_disable                 | Boolean         | false         | Disables the entire KillInfo plugin. |
-| ki_accuracyline            | String          | See this page | Shows player their accuracy in end of round console, when they use the client command or in ki_getinfo. |
-| ki_killline                | String          | See this page | Shows player their kills in end of round console, when they use the client command or in ki_getinfo.  |
-| ki_kdrline                 | String          | See this page | Shows player their kill death ratio in end of round console, when they use the client command or in ki_getinfo.  |
-| ki_endofroundline          | String          | See this page | Message that is broadcasted to everyone on round end.  |
+| ki_accuracyline            | String          | [See this page](https://github.com/MrMith/KillInfo/wiki/ki_accuracyline) | Shows player their accuracy in end of round console, when they use the client command or in ki_getinfo. |
+| ki_killline                | String          | [See this page](https://github.com/MrMith/KillInfo/wiki/ki_killline) | Shows player their kills in end of round console, when they use the client command or in ki_getinfo.  |
+| ki_kdrline                 | String          | [See this page](https://github.com/MrMith/KillInfo/wiki/ki_kdrline) | Shows player their kill death ratio in end of round console, when they use the client command or in ki_getinfo.  |
+| ki_endofroundline          | String          | Check your console for more detailed information about kills, death and accuracy! Press ~ to access! | Message that is broadcasted to everyone on round end.  |
 | ki_callcommandname         | String          | killinfo      | Name for command used so player's can see their own stats. This is entered in the console you press ~ to open. |
 
 
