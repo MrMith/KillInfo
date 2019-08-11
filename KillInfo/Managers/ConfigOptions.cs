@@ -17,7 +17,6 @@
 			KillLine = plugin.GetConfigString("ki_killline");
 			KDRLine = plugin.GetConfigString("ki_kdrline");
 			CallCommandName = plugin.GetConfigString("ki_callcommandname");
-
 			EndOfRoundLine = plugin.GetConfigString("ki_endofroundline");
 			CheckForFalseRoundEnd = true;
 		}

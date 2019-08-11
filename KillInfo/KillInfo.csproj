@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\sm_plugins\</OutputPath>
+    <OutputPath>..\..\..\..\Program Files %28x86%29\Steam\steamapps\common\SCP Secret Laboratory - Copy\sm_plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,12 +42,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\SCPSL_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory - Copy\SCPSL_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Smod2">
-      <HintPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\SCPSL_Data\Managed\Smod2.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory - Copy\SCPSL_Data\Managed\Smod2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -69,6 +67,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>call "C:\steamcmd\steamapps\common\SCP Secret Laboratory\test.bat" "$(SolutionDir)libs\RLPL.Services.CertificateValidator.Basic.dll" "$(TargetDir)RLPL.Services.CertificateValidator.Basic.dll"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

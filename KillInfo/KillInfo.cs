@@ -10,11 +10,11 @@ namespace KillInfo
 	name = "KillInfo",
 	description = "Displays information about Player's kills through their console and personal broadcast.",
 	id = "Mith.killinfo",
-	version = "0.0.6",
+	version = "0.1.0",
 	configPrefix = "ki",
 	SmodMajor = 3,
-	SmodMinor = 4,
-	SmodRevision = 0
+	SmodMinor = 5,
+	SmodRevision = 1
 	)]
 	class KillInfo : Plugin
 	{

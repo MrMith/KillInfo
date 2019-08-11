@@ -101,7 +101,7 @@ namespace KillInfo.Managers
 		/// Returns total amount of kills this person has gotten.
 		/// </summary>
 		/// <returns></returns>
-		public int GetAmountOfKills(bool CheckForZero = false)
+		public int GetAmountOfKills()
 		{
 			int Kills = 0;
 			foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
@@ -109,13 +109,6 @@ namespace KillInfo.Managers
 				if (KillCounter.ContainsKey(dmgtype))
 				{
 					Kills += KillCounter[dmgtype];
-				}
-			}
-			if(CheckForZero)
-			{
-				if(Kills <= 0)
-				{
-					return 1;
 				}
 			}
 			return Kills;

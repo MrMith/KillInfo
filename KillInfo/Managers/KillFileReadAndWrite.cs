@@ -14,11 +14,11 @@ namespace KillInfo
 {
 	class KillFileReadAndWrite
 	{
-		public ConfigOptions configOptions = new ConfigOptions();
+		public ConfigOptions configOptions;
 
 		public void SetUp(ConfigOptions config)
 		{
-			configOptions = config;
+			this.configOptions = config;
 		}
 
 		/// <summary>
@@ -27,11 +27,6 @@ namespace KillInfo
 		public Dictionary<string,PlayerInfo> ReadAllPlayers(Dictionary<string,PlayerInfo> CheckSteamIDForKillInfo)
 		{
 			string dir = MakeSureDirExistAndGetDir();
-
-			if (dir.Length == 0)
-			{
-				return null;
-			}
 
 			foreach (Player player in Smod2.PluginManager.Manager.Server.GetPlayers())
 			{
@@ -76,11 +71,6 @@ namespace KillInfo
 		{
 			string dir = MakeSureDirExistAndGetDir();
 
-			if (dir.Length == 0)
-			{
-				return new PlayerInfo();
-			}
-
 			if (File.Exists(dir + steamid + ".txt"))
 			{
 				PlayerInfo playerinfo = new PlayerInfo();
@@ -105,22 +95,15 @@ namespace KillInfo
 				}
 				return playerinfo;
 			}
-			else
-			{
-				return new PlayerInfo();
-			}
+			return new PlayerInfo();
 		}
-		
+
 		/// <summary>
 		/// Goes through and saves each player's stats to their file
 		/// </summary>
 		public void SaveAllPlayers(Dictionary<string,PlayerInfo> CheckSteamIDForKillInfo)
 		{
 			string dir = MakeSureDirExistAndGetDir();
-			if (dir.Length == 0)
-			{
-				return;
-			}
 
 			foreach (KeyValuePair<string,PlayerInfo> SteamIDandPlayerInfo in CheckSteamIDForKillInfo)
 			{
@@ -153,11 +136,6 @@ namespace KillInfo
 
 			string dir = MakeSureDirExistAndGetDir();
 
-			if(dir.Length == 0)
-			{
-				return;
-			}
-
 			if (dir.Length >= 1)
 			{
 				using (StreamWriter writeData = new StreamWriter(dir + steamid + ".txt", false))
@@ -181,6 +159,7 @@ namespace KillInfo
 
 			}
 		}
+
 		/// <summary>
 		/// Gets directory where to save all information about players
 		/// </summary>
@@ -203,7 +182,7 @@ namespace KillInfo
 			{
 				if (!Directory.Exists(configOptions.KillInfo_Dir))
 				{
-					return "";
+					throw new Exception("KillInfo Dir not found!");
 				}
 
 				if(configOptions.KillInfo_Dir[configOptions.KillInfo_Dir.Length-1] == '\\')

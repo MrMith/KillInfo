@@ -79,7 +79,7 @@ namespace KillInfo
 				}
 
 				StringBuilder KDRLine = new StringBuilder(configOptions.KDRLine);
-				KDRLine.Replace("KDRLINE", ((double)CurrentPlayerInfo.GetAmountOfKills(true) / (double)CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
+				KDRLine.Replace("KDRLINE", ((double)CurrentPlayerInfo.GetAmountOfKills() / (double)CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
 				KDRLine.Replace("DEATHS", CurrentPlayerInfo.GetAmountOfDeaths().ToString());
 				KDRLine.Replace("KILLS", CurrentPlayerInfo.GetAmountOfKills().ToString());
 				player.SendConsoleMessage(KDRLine.ToString());
@@ -114,8 +114,9 @@ namespace KillInfo
 			{
 				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
 				{
-					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite?.ReadPlayerBySteamID(ev.Player.SteamId);
+					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 				}
+
 				PlayerInfo CurrentPlayerInfo = CheckSteamIDForKillInfo[ev.Player.SteamId];
 
 				StringBuilder AccuracyMessage = new StringBuilder(configOptions.AccuracyLine);
@@ -137,7 +138,7 @@ namespace KillInfo
 				}
 
 				StringBuilder KDRLine = new StringBuilder(configOptions.KDRLine);
-				KDRLine.Replace("KDRLINE", ((double)CurrentPlayerInfo.GetAmountOfKills(true) / (double)CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
+				KDRLine.Replace("KDRLINE", ((double)CurrentPlayerInfo.GetAmountOfKills() / (double)CurrentPlayerInfo.GetAmountOfDeaths(true)).ToString());
 				KDRLine.Replace("DEATHS", CurrentPlayerInfo.GetAmountOfDeaths().ToString());
 				KDRLine.Replace("KILLS", CurrentPlayerInfo.GetAmountOfKills().ToString());
 				ev.Player.SendConsoleMessage(KDRLine.ToString());
@@ -159,7 +160,8 @@ namespace KillInfo
 
 			if (KillReadAndWrite.MakeSureDirExistAndGetDir().Length == 0)
 			{
-				plugin.Error("ki_playerinfodir is not set correctly. Nothing is going to be saved.");
+				plugin.Error("ki_playerinfodir is not set correctly. Nothing is going to be saved. Disabling KillInfo : " + plugin.Details.version);
+				plugin.PluginManager.DisablePlugin(plugin);
 			}
 		}
 
